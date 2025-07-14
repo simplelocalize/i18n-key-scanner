@@ -8,6 +8,10 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simplelocalize/i18n-key-scanner.git"
+  },
   "dependencies": {
     "commander": "^14.0.0"
   },
