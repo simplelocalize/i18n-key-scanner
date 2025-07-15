@@ -1,0 +1,8 @@
+{
+  "strategy": "i18next",
+  "includeExtensions": [".js", ".jsx", ".ts", ".tsx", ".html"],
+  "excludeDirs": ["node_modules", "dist", "build"],
+  "selector": "[data-i18n-key]",
+  "keyAttr": "data-i18n-key",
+  "textAttr": null
+}
