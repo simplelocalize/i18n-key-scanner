@@ -1,4 +1,4 @@
-interface Config {
+interface CliConfig {
     keyAttr?: string;
     textAttr?: string;
     selector?: string;

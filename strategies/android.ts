@@ -7,7 +7,7 @@ export function getDefaultConfig() {
     };
 }
 
-export function androidStrategy(files: string[], config?: Config): ExtractionResult[] {
+export function androidStrategy(files: string[], config?: CliConfig): ExtractionResult[] {
     const rStringRegex = /R\.string\.(\w+)/g;
     const xmlStringRegex = /android:text="@string\/(.*?)"/g;
     const results: ExtractionResult[] = [];

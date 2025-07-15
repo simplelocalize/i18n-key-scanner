@@ -8,30 +8,12 @@ import { dataI18nKeyStrategy } from './strategies/data-i18n-key';
 import { ejsStrategy } from './strategies/ejs';
 import { appleStrategy } from './strategies/apple';
 import { androidStrategy } from './strategies/android';
-import { StrategyConfig } from './strategies/strategy-config';
-
-function findFiles(dir: string, exts: string[], excludeDirs: string[]): string[] {
-    let results: string[] = [];
-    const list = fs.readdirSync(dir);
-    for (const file of list) {
-        const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
-        if (stat && stat.isDirectory()) {
-            if (excludeDirs.includes(file)) continue;
-            results = results.concat(findFiles(filePath, exts, excludeDirs));
-        } else {
-            if (exts.some(ext => filePath.endsWith(ext))) {
-                results.push(filePath);
-            }
-        }
-    }
-    return results;
-}
+import glob from 'glob';
 
 const STRATEGY_MAP: Record<string, any> = {
     'i18next': i18nextStrategy,
     'react-intl': reactIntlStrategy,
-    'html-data-attributes': dataI18nKeyStrategy,
+    'data-i18n-key': dataI18nKeyStrategy,
     'ejs': ejsStrategy,
     'apple': appleStrategy,
     'android': androidStrategy
@@ -41,22 +23,24 @@ const program = new Command();
 
 program
     .option('--config <file>', 'Path to strategy config JSON file')
-    .option('--searchDir <dir>', '(Optional) Choose where to search. Default: ./', './')
-    .option('--output <file>', '(Optional) Choose where to save results. Default: ./extraction.json', './extraction.json')
+    .option('--strategy <name>', '(Optional) Extraction strategy to use (overrides config file)')
+    .option('--src <pattern>', '(Optional) Glob pattern for files to search. Default: ./', './')
+    .option('--out <file>', '(Optional) Choose where to save results. Default: ./extraction.json', './extraction.json')
     .action((options) => {
-        const { config, searchDir, output } = options;
+        const { config, strategy: cliStrategy, src, out } = options;
         if (!config) {
             console.error('Config file is required.');
             process.exit(1);
         }
 
-        let userConfig: StrategyConfig = {};
+        let userConfig: CliConfig = {};
         if (config && require('fs').existsSync(config)) {
-            userConfig = JSON.parse(require('fs').readFileSync(config, 'utf-8')) as StrategyConfig;
+            userConfig = JSON.parse(require('fs').readFileSync(config, 'utf-8')) as CliConfig;
         }
-        const strategyName = userConfig?.strategy || "";
+        // Prefer CLI --strategy over config file
+        const strategyName = cliStrategy || userConfig?.strategy || "";
         if (!strategyName || !STRATEGY_MAP[strategyName]) {
-            console.error('Unknown or missing strategy in config file. Given strategy:', strategyName);
+            console.error('Unknown or missing strategy. Given strategy:', strategyName);
             console.error('Available strategies:', Object.keys(STRATEGY_MAP).join(', '));
             process.exit(1);
         }
@@ -66,14 +50,13 @@ program
             process.exit(1);
         }
         const defaultConfig = strategy.getDefaultConfig();
-        const effectiveConfig = { ...defaultConfig, ...userConfig };
+        const effectiveConfig = { ...defaultConfig, ...userConfig, strategy: strategyName };
 
-        const includeExtensions = effectiveConfig.includeExtensions || [];
-        const excludeDirs = effectiveConfig.excludeDirs || [];
-        const files = findFiles(searchDir, includeExtensions, excludeDirs);
+        // Use glob to find files
+        const files = glob.sync(src, { ignore: effectiveConfig.excludeDirs || [] });
         const results = strategy(files, effectiveConfig);
-        fs.writeFileSync(path.resolve(output), JSON.stringify(results, null, 2));
-        console.log('Extraction complete. Output saved to', output);
+        fs.writeFileSync(path.resolve(out), JSON.stringify(results, null, 2));
+        console.log('Extraction complete. Output saved to', out);
     });
 
 program.parse(process.argv);

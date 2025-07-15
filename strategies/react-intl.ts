@@ -7,7 +7,7 @@ export function getDefaultConfig() {
     };
 }
 
-export function reactIntlStrategy(files: string[], config?: Config): ExtractionResult[] {
+export function reactIntlStrategy(files: string[], config?: CliConfig): ExtractionResult[] {
     const results: ExtractionResult[] = [];
     const formattedMessageRegex = /<FormattedMessage[^>]*id=["'](.*?)["'][^>]*defaultMessage=["'](.*?)["']/g;
     const formattedHTMLMessageRegex = /<FormattedHTMLMessage[^>]*id=["'](.*?)["'][^>]*defaultMessage=["'](.*?)["']/g;
