@@ -7,7 +7,7 @@ export function getDefaultConfig() {
     };
 }
 
-export function ejsStrategy(files: string[], config?: Config): ExtractionResult[] {
+export function ejsStrategy(files: string[], config?: CliConfig): ExtractionResult[] {
     const tRegex = /t\(["'](.*?)["']\)/g;
     const results: ExtractionResult[] = [];
     for (const file of files) {

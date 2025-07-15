@@ -7,7 +7,7 @@ export function getDefaultConfig() {
     };
 }
 
-export function appleStrategy(files: string[], config?: Config): ExtractionResult[] {
+export function appleStrategy(files: string[], config?: CliConfig): ExtractionResult[] {
     const nsRegex = /NSLocalizedString\(["'](.*?)["']/g;
     const results: ExtractionResult[] = [];
     for (const file of files) {

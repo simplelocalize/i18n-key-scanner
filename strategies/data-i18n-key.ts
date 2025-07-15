@@ -11,7 +11,7 @@ export function getDefaultConfig() {
   };
 }
 
-export function dataI18nKeyStrategy(files: string[], config?: Config): ExtractionResult[] {
+export function dataI18nKeyStrategy(files: string[], config?: CliConfig): ExtractionResult[] {
   const selector = config?.selector || '[data-i18n-key]';
   const keyAttr = config?.keyAttr || 'data-i18n-key';
   const textAttr = config?.textAttr || null;
