@@ -4,7 +4,7 @@ import * as path from 'path';
 
 describe('ejsStrategy', () => {
   const testDir = path.join(__dirname, '__testdata__');
-  const testFile = path.join(testDir, 'test.ejs');
+  const testFile = path.join(testDir, 'ejs-test.ejs');
 
   beforeAll(() => {
     if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
