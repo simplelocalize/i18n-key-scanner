@@ -1,5 +1,5 @@
 {
-  "name": "i18n-key-extract",
+  "name": "@simplelocalize/i18n-key-extract",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
